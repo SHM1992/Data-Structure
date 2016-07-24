@@ -1,0 +1,74 @@
+// DataStructure.cpp : 实现数据结构中的常见算法XXX，本例针对共享顺序栈
+//
+
+#include "stdafx.h"
+
+#include <stdlib.h>
+#include <iostream>
+#define MaxSize  50
+using namespace std;
+
+typedef int ElemType;
+typedef struct
+{
+  int top1,top2;
+  ElemType  data[MaxSize];
+}DseqStack;
+
+//初始化共享栈
+void InitStack_dseq(DseqStack *&S)
+{
+  S=(DseqStack *)malloc(sizeof(DseqStack));
+  S->top1=-1;
+  S->top2=MaxSize;
+}
+
+//共享栈的入栈
+//i是栈最终的长度，元素进入共享栈是同时的
+bool Push_dseq(DseqStack *&S,int i,ElemType e)
+{
+  if(S->top1==S->top2||i<=S->top1+1||i>=S->top2+1)
+      return false;
+  else 
+  {     while(S->top1<i-1)
+			S->top1++;
+	    S->data[S->top1]=e;
+		while(S->top2>MaxSize-i)
+			S->top2--;
+		S->data[S->top2]=e;
+        return true;
+  }
+}
+
+//共享栈的出栈
+bool Pop_dseq(DseqStack *&S,int i)
+{
+	ElemType e;
+	if(S->top1<i-1&&i-1<S->top2) 
+	   return false;
+	if(S->top1>=i-1)
+	{
+		while(S->top1>i-1)S->top1--;
+		e=S->data[S->top1];
+		S->data[S->top1]=S->data[S->top1+1];
+	}
+	else
+	{
+		while(S->top2<i-1)S->top2++;
+		e=S->data[S->top2];
+		S->data[S->top2]=S->data[S->top2-1];
+	}
+	return true;
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	DseqStack *S;
+	ElemType e;
+	bool b;
+	InitStack_dseq(S);
+	b=Push_dseq(S,1,20);
+	b=Push_dseq(S,2,30);
+	b=Pop_dseq(S,2);
+	return 0;
+}

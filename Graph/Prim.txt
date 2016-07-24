@@ -1,0 +1,67 @@
+// DataStructure.cpp : 实现数据结构中的Prim算法
+//
+#include "stdafx.h"
+#include <cstdlib>
+#include <iostream>
+using namespace std;
+
+void Prim(int w[6][6])
+{
+	int i;
+	int lowcost[6];//存储各点到U中顶点的最短距离
+	for(i=0;i<6;i++)lowcost[i] = w[0][i];
+	int closest[6] = {1,1,1,1,1,1};//存储lowcost标识的边的另一个端点标号=数组标号+1
+	cout<<"输出顶点1\n"<<endl;
+	int res=5,min,min_i;
+	while(res!=0)
+	{
+		min = 10000;
+		min_i = 0;
+		//找寻V距U最短边对应的点
+		for(i=0;i<6;i++)
+		{
+			if(lowcost[i]==0)continue;
+			if(lowcost[i]<min)
+			{
+				min = lowcost[i];
+				min_i = i;
+			}
+		}
+		//V中剔除该点
+		lowcost[min_i] = 0; res--;
+		cout<<"输出顶点"<<min_i+1<<"和边<"<<min_i+1<<","<<closest[min_i]<<">\n"<<endl;
+		//重新计算lowcost和closest
+		for(i=0;i<6;i++)
+		{
+			if(lowcost[i]==0)continue;
+			min = 10000;
+			//求V中各点到U中顶点的最短距离，更新closest
+			for(int j = 0;j<6;j++)
+			{
+				if(lowcost[j]==0)
+					if(w[i][j]<min)
+					{
+						min = w[i][j];
+						closest[i] = j+1;
+					}
+			}
+			//更新lowcost
+			lowcost[i] = min;
+		}
+	}
+
+}
+
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	int w[6][6] = {{0,6,1,5,10000,10000},
+				   {6,0,5,10000,3,10000},
+	               {1,5,0,7,5,4},
+	               {5,10000,7,0,10000,2},
+	               {10000,3,5,10000,0,6},
+	               {10000,10000,4,2,6,0}};
+	Prim(w);
+	return 0;
+}

@@ -1,0 +1,132 @@
+// DataStructure.cpp : 实现数据结构中的Kruskal算法
+//
+#include "stdafx.h"
+#include <cstdlib>
+#include <iostream>
+#define N 6
+using namespace std;
+
+void QuickSort(int weight[], int index_i[], int index_j[], int l, int r)
+{
+	if(l<r)
+	{
+		int i=l,j=r;
+		int x = weight[l];
+		int x_i = index_i[l];
+		int x_j = index_j[l];
+		while(i<j)
+		{
+			while(i<j && weight[j]>=x)j--;
+			if(i<j)
+			{
+				weight[i] = weight[j];
+				index_i[i] = index_i[j];
+				index_j[i] = index_j[j];
+				i++;
+			}
+			while(i<j && weight[i]<=x)i++;
+			if(i<j)
+			{
+				weight[j] = weight[i];
+				index_i[j] = index_i[i];
+				index_j[j] = index_j[i];
+				j--;
+			}
+		}
+		weight[i] = x;
+		index_i[i] = x_i;
+		index_j[i] = x_j;
+		QuickSort(weight,index_i,index_j,l,i-1);
+		QuickSort(weight,index_i,index_j,i+1,r);
+	}
+}
+
+void Kruskal(int w[N][N])
+{
+	if(N>1)
+	{
+		int i,j,k=0;
+		//取得所有有效边，数目为N*(N-1)/2
+		int weight[N*(N-1)/2],index_i[N*(N-1)/2],index_j[N*(N-1)/2];
+		for(i=0;i<N;i++)
+		{
+			for(j = 0;j<i;j++)
+				if(w[i][j]!=0 && w[i][j]!=10000)
+				{
+					weight[k] = w[i][j];
+					index_i[k] = i;
+					index_j[k] = j;
+					k++;
+				}
+		}
+		//从小到大排序所有边（快排）
+		QuickSort(weight,index_i,index_j,0,k-1);
+		//统计按权值从小到大组合所有边，各顶点出现次数，以检验是否成回路
+		/*int mst[N][N],temp[N][N];
+		for(i=0;i<N;i++)
+			for(j=0;j<i;j++)
+				mst[i][j] = 0;
+		int count = 0;
+		for(i=0;i<k-1;i++)
+		{
+			if(count == N-1)break;
+			mst[index_i[i]][index_j[i]] = 1;count++;
+			for(int ii=0;ii<N;ii++)
+				for(int jj=0;jj<ii;jj++)
+					temp[ii][jj] = mst[ii][jj];
+			int v1 = index_i[i];
+			int v2 = index_j[i];
+			temp[v1][v2] = 0; 
+			while(true)
+			{
+				int path = 0;
+				v1 = v2;
+				for(int kk=0;kk<v1;kk++)
+				{
+					if(temp[v1][kk]==1)
+					{
+						v2 = kk;
+						temp[v1][kk]=0;
+						path = 1;
+						break;
+					}
+				}
+				if(path == 0)
+				{	for(int kk=v1;kk<N;kk++)
+					{
+						if(temp[kk][v1]==1)
+						{
+							v2 = kk;
+							temp[kk][v1]=0;
+							path = 1;
+							break;
+						}
+					}
+				}
+				if(v2 == index_i[i])
+				{
+					mst[index_i[i]][index_j[i]]=0;count--;
+					break;
+				}
+				if(path == 0)
+				{
+					cout<<"添加边<"<<index_i[i]+1<<","<<index_j[i]+1<<">\n"<<endl;
+					break;
+				}
+			}
+		}*/
+	}
+}
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	int w[N][N] = {{0,6,1,5,10000,10000},
+				   {6,0,5,10000,3,10000},
+	               {1,5,0,7,5,4},
+	               {5,10000,7,0,10000,2},
+	               {10000,3,5,10000,0,6},
+	               {10000,10000,4,2,6,0}};
+	Kruskal(w);
+	return 0;
+}

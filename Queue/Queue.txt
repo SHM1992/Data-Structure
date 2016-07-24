@@ -1,0 +1,148 @@
+// DataStructure.cpp : 实现数据结构中的常见算法XXX，本例针对队列
+//
+#include "stdafx.h"
+
+#include "stdlib.h"
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+#define MaxSize 16
+typedef int ElemType;
+typedef struct
+{  ElemType data[MaxSize];
+   int front,rear;
+}SqQueue;
+
+//初始化顺序队列
+void InitQueue(SqQueue *&Q)
+{ 
+  Q=(SqQueue *)malloc(sizeof(SqQueue));
+  Q->front=Q->rear=0;
+  
+}
+
+//入队列
+bool EnQueue(SqQueue *&Q,ElemType e)
+{ 
+  if (Q->rear+1==Q->front)
+     return false;
+  Q->rear=(Q->rear+1) % MaxSize;
+  Q->data[Q->rear]=e;
+  return true;
+}
+
+//出队列
+bool DelQueue(SqQueue *&Q,ElemType &e)
+{ if (Q->front==Q->rear)
+    return false;
+  Q->front=(Q->front+1) % MaxSize;
+  e=Q->data[Q->front];
+  return true;
+}
+
+//获取队列首数据
+bool GetHead(SqQueue *&Q,ElemType &e)
+{ 
+	if (Q->front==Q->rear)
+	 return false;
+    e=Q->data[(Q->front+1)% MaxSize];
+    return true;
+}
+
+
+
+
+typedef struct qnode
+{ ElemType data;
+  struct qnode *next;
+}QNode; 
+    
+typedef struct
+{ QNode *front,*rear;
+}LiQueue;
+
+//初始化链式队列
+void InitQueue_L(LiQueue *&Q)
+{ 
+  Q=(LiQueue *)malloc(sizeof(LiQueue));
+  Q->rear=Q->front=NULL;
+  
+}
+
+//入队列
+void EnQueue_L(LiQueue *&Q,ElemType e)
+{  
+   QNode *s;
+   s=(QNode *)malloc(sizeof(QNode));
+   s->data=e;
+   s->next=NULL;
+   if(Q->rear==NULL)
+      Q->front=Q->rear=s;
+   else
+	  {Q->rear->next=s;
+       Q->rear=s;
+   }
+}
+
+//出队列
+bool DelQueue_L(LiQueue *&Q,ElemType &e)
+{  QNode *t;
+   if(Q->rear==NULL)
+      return false;
+   t=Q->front;
+   Q->front=t->next;
+   if(Q->rear==t)
+	   Q->rear=Q->front=NULL;
+   e=t->data;
+   free(t);
+   return true;
+}
+
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	SqQueue *Q;
+	LiQueue *Q1;
+	ElemType e,x,y;
+	bool k;
+	InitQueue(Q);
+	k=EnQueue(Q,111);
+	k=EnQueue(Q,222);
+	k=DelQueue(Q,e);
+	k=EnQueue(Q,333);
+	k=DelQueue(Q,e);
+	k=DelQueue(Q,e);
+
+
+	InitQueue_L(Q1);
+	EnQueue_L(Q1,100);
+	EnQueue_L(Q1,200);
+	EnQueue_L(Q1,300);
+	k=DelQueue_L(Q1,e);
+	k=DelQueue_L(Q1,e);
+	InitQueue(Q);
+	k=EnQueue(Q,0);
+	k=EnQueue(Q,1);
+	k=EnQueue(Q,1);
+	k=EnQueue(Q,0);
+	cout <<endl<<setw(40)<<' '<<'1'<<endl;
+	int col=35;
+	for(int i=2;i<10;i++)
+	{ 
+		col=col-2;
+		cout<<setw(col)<<' ';
+		for(int j=1;j<=i+1;j++)
+		{  
+			k=DelQueue(Q,x);
+			k=GetHead(Q,y);
+			cout<<setw(4)<<x+y;
+			k=EnQueue(Q,x+y);
+		}
+		cout<<endl;
+		k=EnQueue(Q,0);
+	}
+	e=1;
+	return 0;
+}

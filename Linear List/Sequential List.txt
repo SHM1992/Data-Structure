@@ -1,0 +1,119 @@
+// DataStructure.cpp : 实现数据结构中的常见算法XXX，本例针对顺序表（已有序）
+//
+
+#include "stdafx.h"
+
+#include <cstdlib>
+#define  MaxSize 50
+typedef  int  ElemType;
+typedef struct
+{
+   int  length;
+   ElemType data[MaxSize+1];
+}SqList;
+
+//创建新的顺序表
+void CreateList(SqList *&L,ElemType a[],int n)
+{
+  if(n>MaxSize)return;
+  int  i;
+  for(i=1;i<=n;i++)
+	    L->data[i]=a[i];
+  L->length=n;
+}
+
+//初始化顺序表
+void InitList(SqList *&L)
+{
+  L=(SqList *)malloc(sizeof(SqList));
+  L->length =0;
+}
+
+//将元素插入顺序表
+bool ListInsert(SqList *&L,ElemType e)
+{
+	int i=1;
+	while(e>L->data[i]&&i<=L->length)i++;
+	if(i==L->length+1)L->data[i]=e;
+	else
+	{
+		for(int j=L->length;j>=i;j--)
+			L->data[j+1]=L->data[j];
+		L->data[i]=e;
+	}
+	L->length++;
+	return true;
+}
+
+//将顺序表中某元素删除
+bool ListDelete1(SqList *&L,ElemType e)
+{
+	int i=1;
+	while(e!=L->data[i]&&i<=L->length)i++;
+	if(i==L->length+1)return false;
+	else
+	{
+		for(int j=i;j<=L->length;j++)
+			L->data[j]=L->data[j+1];
+		L->length--;
+	}
+	return true;
+}
+
+//将顺序表中重复元素删除
+bool ListDelete2(SqList *&L)
+{
+	for(int i=1;i<=L->length;i++)
+	{
+		if(L->data[i]==L->data[i+1])
+		{
+			for(int j=i;j<=L->length;j++)
+				L->data[j]=L->data[j+1];
+			L->length--;
+			i--;
+		}
+	}
+	return true;
+}
+
+//合并两个顺序表
+bool ListBing(SqList *&LA,SqList *&LB,SqList *&LC)
+{
+	LC=(SqList *)malloc(sizeof(SqList));
+    LC->length =LA->length+LB->length;
+	int i,j=1,k;//l:保存遍历位置
+	for(i=1;i<=LA->length;i++)
+		LC->data[i]=LA->data[i];
+	for(;i-LA->length<=LB->length;i++)
+	{
+		while(LB->data[i-LA->length]>=LC->data[j])j++;
+		for(k=i-1;k>=j;k--)
+			LC->data[k+1] = LC->data[k];
+		LC->data[k+1] = LB->data[i-LA->length];
+	}
+	return true;
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	SqList *L,*LA,*LB,*LC;
+	ElemType a[]={0,11,22,33,44,55,66,77},e;
+	ElemType c[]={0,11,22,33,44,55,66};//0不算元素，仅用于填充第一个位置
+	ElemType d[]={0,22,33,44,55,66,77};
+	InitList(L);
+	InitList(LA);
+	InitList(LB);
+	CreateList(L,a,7);
+	CreateList(LA,c,6);
+	CreateList(LB,d,6);
+	bool b;
+	b=ListInsert(L,44);
+	if(b==true)printf("true!");
+	b=ListDelete1(L,55);
+	if(b==true)printf("true!");
+	b=ListDelete2(L);
+	if(b==true)printf("true!");
+	b=ListBing(LA,LB,LC);
+	if(b==true)printf("true!\n");
+	return 0;
+}

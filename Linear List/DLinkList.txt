@@ -1,0 +1,105 @@
+// DataStructure.cpp : 实现数据结构中的常见算法XXX，本例针对双向循环链表
+//
+
+#include "stdafx.h"
+
+#include <cstdlib>
+typedef int ElemType;
+typedef struct DNode
+{ ElemType  data;
+  struct DNode  *prior,*next; 
+}DLinkList;
+
+//初始化双向循环链表
+bool InitList_DuL(DLinkList *&L)
+{
+  L=(DLinkList *)malloc(sizeof(DLinkList));
+  if(L==NULL)
+	  return false;
+  L->prior=L->next=L;
+  return true;
+}
+
+//尾插法创建双向循环链表
+bool Creat_DuL(DLinkList *&L,ElemType a[],int n)
+{
+  DLinkList *s;
+  bool k=InitList_DuL(L);
+  if (!k) 
+	  return false;
+  for(int i=0;i<n;i++)
+  {
+     s=(DLinkList *)malloc(sizeof(DLinkList));
+	 s->data=a[i];
+	 s->next=L;
+	 s->prior=L->prior;
+	 L->prior->next=s;
+	 L->prior=s;
+  }
+  return true;
+
+}
+
+//定位双向循环链表中的某元素
+bool Locate_DuL(DLinkList *L,ElemType e,DLinkList *&p)
+{
+	p=L->prior;
+	while(p!=L && p->data!=e)
+		p=p->prior;
+	if(p==L)
+		return false;
+	else
+	    return true;
+}
+
+//双向循环链表的插入，先头插后尾插
+void Insert_DuL(DLinkList *&L,DLinkList *p,ElemType e1,ElemType e2)
+{
+   DLinkList *s;
+   s=(DLinkList *)malloc(sizeof(DLinkList));
+   s->data=e1;
+   s->next=p;
+   s->prior=p->prior;
+   p->prior->next=s;
+   p->prior=s;
+   s=(DLinkList *)malloc(sizeof(DLinkList));
+   s->data=e2;
+   s->next=p->next;
+   s->prior=p;
+   p->next->prior=s;
+   p->next=s;
+}
+
+//双向循环链表的删除
+void Delete_DuL(DLinkList *&L,DLinkList *p)
+{
+   p->prior->next=p->next ;
+   p->next->prior=p->prior;
+   free(p);
+}
+
+//判断双向循环链表是否对称
+bool symmetry(DLinkList *L)
+{
+	DLinkList *p,*q;
+	p=L->next;q=L->prior;
+	while(p!=q && q->next!=p)
+		if(p->data==q->data)
+		{
+		  p=p->next;q=q->prior;
+		}
+		else
+		  return false;
+	return true;
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	DLinkList *L,*p;
+	ElemType a[]={11,22,33,44,55,66,77};	
+	bool b=Creat_DuL(L,a,7);
+	b=Locate_DuL(L,44,p);
+	Insert_DuL(L,p,100,200);
+	Delete_DuL(L,p);
+	b=symmetry(L);
+}

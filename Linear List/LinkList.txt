@@ -1,0 +1,168 @@
+// DataStructure.cpp : 实现数据结构中的常见算法XXX，本例针对单链表
+//
+
+#include "stdafx.h"
+
+#include <cstdlib>
+
+#define MaxSize 50
+typedef int ElemType;
+typedef struct DNode
+{
+	ElemType data;
+	struct DNode * next;
+}LinkList;
+
+//尾插法创建新单链表，头结点为空
+void CreateListF(LinkList *&L,ElemType a[],int n)
+{
+	LinkList *s,*r;
+	int i;
+	L=(LinkList *)malloc(sizeof(LinkList));
+	r=L;
+	for(i=0;i<n;i++)
+	{
+		s=(LinkList *)malloc(sizeof(LinkList));
+		s->data=a[i];
+		r->next=s;
+		r=s;
+	}
+	r->next=NULL;
+}
+
+//初始化单链表
+void InitList(LinkList *&L)
+{
+	L=(LinkList *)malloc(sizeof(LinkList));
+	L->next=NULL;
+}
+
+//直接选择排序
+void selectsort(LinkList *&L)
+{
+	LinkList *p,*q,*min;
+	int temp;
+	for(q=L->next;q!=NULL;q=q->next)
+	{
+		p=q;
+		min=p;
+		while(p!=NULL)
+		{
+			if(p->data<min->data)min=p;
+			p=p->next;
+		}
+		temp=min->data;
+		min->data=q->data;
+		q->data=temp;
+	}
+}
+
+//插入新元素
+bool ListInsert(LinkList *&L,ElemType e)
+{
+	LinkList *p=L,*s;
+	while(p->next!=NULL&&e>p->next->data)p=p->next;
+	if(p->next==NULL)
+	{
+		s=(LinkList *)malloc(sizeof(LinkList));
+		s->data=e;
+		p->next=s;
+	}
+	else
+	{
+		s=(LinkList *)malloc(sizeof(LinkList));
+		s->data=e;
+		s->next=p->next;
+		p->next=s;
+	}
+	return true;
+}
+
+//删除某元素
+bool ListDelete(LinkList *&L,ElemType e)
+{
+	LinkList *p=L,*s;
+	while(p->next!=NULL&&e!=p->next->data)p=p->next;
+	if(p->next==NULL)
+		return false;
+	else
+	{
+		while(e==p->next->next->data)p=p->next;
+		s=p->next;
+		p->next=s->next;
+		free(s);
+		return true;
+	}
+}
+
+//截取元素在e1和e2之间的链表段
+bool ex(LinkList *&L,LinkList *&L1,ElemType e1,ElemType e2)
+{
+	L1=(LinkList *)malloc(sizeof(LinkList));
+	L1->next=NULL;
+	LinkList *p=L;
+	while(p->next!=NULL&&e1>p->next->data)p=p->next;
+	L1->next=p;
+	while(p->next!=NULL&&e2>p->next->data)p=p->next;
+	p->next=NULL;
+	return true;				
+}
+
+//求2个单链表的交集
+bool jiao(LinkList *&La,LinkList *&Lb,LinkList *&Lc)
+{
+	Lc=(LinkList *)malloc(sizeof(LinkList));
+	Lc->next=NULL;
+	LinkList *pa,*pb,*s=Lc;
+	for(pa=La;pa->next!=NULL;pa=pa->next)
+		for(pb=Lb;pb->next!=NULL;pb=pb->next)
+			if(pa->next->data==pb->next->data)
+			{
+				LinkList *	temp=(LinkList *)malloc(sizeof(LinkList));
+				temp->data=pa->next->data;
+				temp->next=NULL;
+				s->next=temp;
+				s=temp;
+			}
+	return true;
+}
+
+//单链表逆置
+bool Invert(LinkList *&L, LinkList *&L1)
+{
+	if(L->next==NULL)return true;
+	L1=(LinkList *)malloc(sizeof(LinkList));
+	L1->next=NULL;
+	LinkList *p,*t;
+	p=L;
+	while(p->next!=NULL)
+	{
+		LinkList *temp = (LinkList *)malloc(sizeof(LinkList));
+		temp->data = p->next->data;
+		temp->next = L1->next;
+		L1->next = temp;
+		p = p->next;
+	}
+	return true;
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	LinkList *L,*L1,*Lc,*La,*Lb;
+	ElemType a[]={0,110,22,44,33,55,77,77},e,e1,e2;
+	ElemType aa[]={0,11,22,33,44,55,66,77},bb[]={0,22,44,55,66,88,89,99};
+	InitList(L);
+	InitList(La);
+	InitList(Lb);
+	CreateListF(L,a,7);
+	CreateListF(La,aa,7);
+	CreateListF(Lb,bb,7);
+	selectsort(L);
+	bool b;
+	//b=ex(L,L1,45,70);
+	//b=jiao(La,Lb,Lc);
+	//b=ListInsert(L,90);
+	//b=ListDelete(L,55);
+	b=Invert(L,L1);
+	return 0;
+}

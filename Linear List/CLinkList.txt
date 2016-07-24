@@ -1,0 +1,74 @@
+// DataStructure.cpp : 实现数据结构中的常见算法XXX，本例针对循环单链表
+//
+
+#include "stdafx.h"
+
+#include <cstdlib>
+#include <iostream>
+using namespace std;
+
+typedef int ElemType;
+typedef struct LNode
+{
+    ElemType data;
+    struct LNode *next;
+}LinkList;
+
+//初始化循环链表
+void InitList(LinkList *&rear)
+{
+  rear=(LinkList *)malloc(sizeof(LNode));
+  rear->next=rear;
+}
+
+//尾插法创建新的循环链表
+void CreateListR(LinkList *&rear,ElemType a[],int n)
+{
+  LinkList *s;
+  InitList(rear);
+  for(int i=1;i<n;i++)
+  { 
+    s=(LinkList *)malloc(sizeof(LNode));
+	s->data=a[i];
+	s->next=rear->next;
+	rear->next=s;
+	rear=s;
+  }
+}
+
+//定位循环链表中的元素
+bool ListLocate(LinkList *rear,ElemType e,LinkList *&p)
+{
+    LinkList *L=rear->next;
+	p=L->next;
+	while(p!=L && p->data!=e)
+		p=p->next;
+	if(p!=L)
+		return true;
+	else
+		return false;
+}
+
+//隔m个元素删除结点直至链表仅含一个元素（选猴王，不包含头结点）
+void Joseph(LinkList *p,int m)
+{
+   while(p->next!=p)
+   {for(int i=1;i<m;i++)
+		p=p->next;
+    LinkList *q=p->next;
+	p->next=q->next;
+	cout<<q->data<<"  ";
+	free(q);
+   }
+	cout<<p->data<<"  ";
+	free(p);
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	LinkList *rear,*p;
+	ElemType a[]={3,6,2,4,5,3};
+	CreateListR(rear,a,6);
+	bool k=ListLocate(rear,44,p);
+	//Joseph(rear,4);
+}
