@@ -1,5 +1,5 @@
 # Data-Structure
-These files in the Data Structure folder are just for practicing common operations of classical data structures.
+These files in the Data Structure folder are just txt files for practicing common operations of classical data structures. If you want to run these codes, you need to copy them into C++ program files and build them first.
 
 Linear List includes sequential list, link list, cycle link list, double link list.
 
